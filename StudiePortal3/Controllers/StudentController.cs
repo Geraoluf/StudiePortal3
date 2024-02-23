@@ -67,7 +67,52 @@ namespace StudiePortal3.Controllers
         public async Task<IActionResult> Edit(Student viewModel)
         {
 
+            var student = await dbContext.Students.FindAsync(viewModel.Id);
 
+            if (student is not null)
+            {
+                student.Name = viewModel.Name;
+                student.Email = viewModel.Email;
+                student.Phone = viewModel.Phone;
+                student.Subscribed = viewModel.Subscribed;
+
+                await dbContext.SaveChangesAsync();
+            }
+
+            return RedirectToAction("StudentListe", "student");
         }
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Student viewModel)
+        {
+            dbContext.Students.Remove(viewModel);
+            await dbContext.SaveChangesAsync();
+            return RedirectToAction("StudentListe", "Student");
+        }
+
+        /*
+        [HttpPost]
+        public async Task<IActionResult> Delete(Student viewModel)
+        {
+            
+
+
+            var student = await dbContext.Students
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == viewModel.Id);
+
+
+            if (student is not null)
+            {
+                dbContext.Students.Remove(student); // Fjern det hentede student-objekt, ikke viewModel
+                await dbContext.SaveChangesAsync();
+            }
+
+            return RedirectToAction("StudentListe", "Student"); // Omdiriger til siden med student-listen
+        }
+        */
     }
 }
